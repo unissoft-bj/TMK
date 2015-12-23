@@ -1,0 +1,21 @@
+
+bin/
+build/
+*.tmp
+*.bak
+*.swp
+local.properties
+.settings/
+.gradle/
+
+# Eclipse Core
+.project
+
+# External tool builders
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
+
