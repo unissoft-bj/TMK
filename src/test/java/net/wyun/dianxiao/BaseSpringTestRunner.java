@@ -1,9 +1,9 @@
-package net.wyun;
+package net.wyun.dianxiao;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import net.wyun.DianxiaoApplication;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -15,7 +15,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = DianxiaoApplication.class)
 @WebIntegrationTest(randomPort = true)
-public class DianxiaoApplicationTests {
+public abstract class BaseSpringTestRunner {
 	
 	@Autowired
     private WebApplicationContext wac;
@@ -27,9 +27,5 @@ public class DianxiaoApplicationTests {
         mockMvc = webAppContextSetup(wac)
                 .build();
     }
-
-	@Test
-	public void contextLoads() {
-	}
 
 }
