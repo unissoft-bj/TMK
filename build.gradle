@@ -15,6 +15,14 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'spring-boot' 
 
+eclipse {
+    classpath {
+       downloadSources=true
+    }
+}
+
+
+
 jar {
     baseName = 'dianxiao'
     version = '0.0.1-SNAPSHOT'
@@ -23,6 +31,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -31,6 +40,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'com.sentaca:watcher:1.0-SNAPSHOT'
     // H2
     compile 'com.h2database:h2'
     // Flyway
