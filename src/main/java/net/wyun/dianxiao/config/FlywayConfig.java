@@ -29,8 +29,11 @@ public class FlywayConfig {
 	@Primary
 	public Flyway primaryFlyway() {
 		Flyway flyway = new Flyway();
+		
 		flyway.setDataSource(primaryDataSource);
 		flyway.setLocations(flywayConfiguration.getPrimary().getLocation());
+		flyway.setEncoding("GBK");
+		
 		return flyway;
 	}
 	
