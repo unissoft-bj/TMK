@@ -7,4 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface OSLPRepository extends CrudRepository<OSLP, Integer>{
 
+	OSLP findBySlpName(String slpName);
 }

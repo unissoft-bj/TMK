@@ -28,7 +28,8 @@ public class OUSR {
 	String PASSWORD2; //  varchar(8) NULL ,
 	short USERID; //  smallint NOT NULL ,
 	String USER_CODE; //  varchar(8) NOT NULL ,
-	String U_NAME; //  varchar(30) NULL ,
+	@Column(name="U_NAME")
+	String uName; //  varchar(30) NULL ,
 	short GROUPS; //  smallint NULL ,
 	String PASSWORD4; //  varchar(254) NULL ,
 	String ALLOWENCES; //  longtext NULL ,
@@ -138,11 +139,11 @@ public class OUSR {
 	public void setUSER_CODE(String uSER_CODE) {
 		USER_CODE = uSER_CODE;
 	}
-	public String getU_NAME() {
-		return U_NAME;
+	public String getUName() {
+		return uName;
 	}
-	public void setU_NAME(String u_NAME) {
-		U_NAME = u_NAME;
+	public void setUName(String u_NAME) {
+		this.uName = u_NAME;
 	}
 	public short getGROUPS() {
 		return GROUPS;
@@ -582,7 +583,7 @@ public class OUSR {
 				+ USERID
 				+ ", "
 				+ (USER_CODE != null ? "USER_CODE=" + USER_CODE + ", " : "")
-				+ (U_NAME != null ? "U_NAME=" + U_NAME + ", " : "")
+				+ (uName != null ? "U_NAME=" + uName + ", " : "")
 				+ "GROUPS="
 				+ GROUPS
 				+ ", "
