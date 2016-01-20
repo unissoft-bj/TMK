@@ -43,6 +43,7 @@ dependencies {
     compile 'com.sentaca:watcher:1.0-SNAPSHOT'
     // H2
     compile 'com.h2database:h2'
+    compile "mysql:mysql-connector-java"
     // Flyway
     compile 'org.flywaydb:flyway-core'
     testCompile('org.springframework.boot:spring-boot-starter-test') 
