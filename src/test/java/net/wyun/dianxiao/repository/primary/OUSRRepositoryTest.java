@@ -1,6 +1,7 @@
 package net.wyun.dianxiao.repository.primary;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.StrictAssertions.assertThat;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,13 @@ public class OUSRRepositoryTest extends BaseSpringTestRunner {
 		for(OUSR o:ousrs){
 			System.out.println(o.toString());
 		}
+	}
+	
+	@Test
+	public void getOSLPByName(){
+		OUSR o = ousrRepository.findByUName("刘明明");
+		assertThat(o).isNotNull();
+		System.out.println(o.toString());
 	}
 
 }

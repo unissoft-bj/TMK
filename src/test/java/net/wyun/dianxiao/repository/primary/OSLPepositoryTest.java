@@ -21,5 +21,12 @@ public class OSLPepositoryTest extends BaseSpringTestRunner {
 			System.out.println(o.toString());
 		}
 	}
+	
+	@Test
+	public void getOSLPByName(){
+		OSLP o = oslpRepository.findBySlpName("张涛");
+		assertThat(o).isNotNull();
+		System.out.println(o.toString());
+	}
 
 }
