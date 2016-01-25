@@ -20,34 +20,7 @@ import javax.persistence.Table;
 @Table(name = "OCLG")
 public class OCLG {
 	
-	@Override
-	public String toString() {
-		return "OCLG [clgCode=" + clgCode + ", cardCode=" + cardCode
-				+ ", notes=" + notes + ", cntctDate=" + cntctDate
-				+ ", cntctTime=" + cntctTime + ", recontact=" + recontact
-				+ ", Closed=" + Closed + ", closeDate=" + closeDate
-				+ ", contactPer=" + contactPer + ", tel=" + tel + ", fax="
-				+ fax + ", cntctSbjct=" + cntctSbjct + ", transfered="
-				+ transfered + ", DocType=" + DocType + ", docNum=" + docNum
-				+ ", docEntry=" + docEntry + ", attachment=" + attachment
-				+ ", dataSource=" + dataSource + ", attendUser=" + attendUser
-				+ ", cntctCode=" + cntctCode + ", userSign=" + userSign
-				+ ", slpCode=" + slpCode + ", action=" + action + ", details="
-				+ details + ", cntctType=" + cntctType + ", location="
-				+ location + ", beginTime=" + beginTime + ", duration="
-				+ duration + ", durType=" + durType + ", endTime=" + endTime
-				+ ", priority=" + priority + ", reminder=" + reminder
-				+ ", remQty=" + remQty + ", remType=" + remType + ", oprId="
-				+ oprId + ", oprLine=" + oprLine + ", remDate=" + remDate
-				+ ", remTime=" + remTime + ", remSented=" + remSented
-				+ ", instance=" + instance + ", endDate=" + endDate
-				+ ", status=" + status + ", personal=" + personal
-				+ ", inactive=" + inactive + ", tentative=" + tentative
-				+ ", street=" + street + ", city=" + city + ", country="
-				+ country + ", state=" + state + ", room=" + room
-				+ ", parentType=" + parentType + ", parentId=" + parentId
-				+ ", prevActvty=" + prevActvty + ", atcEntry=" + atcEntry + "]";
-	}
+	
 	@Id
 	@Column(name = "ClgCode", unique = true, nullable = false)
 	int clgCode; //  int NOT NULL ,
@@ -429,4 +402,32 @@ public class OCLG {
 		this.atcEntry = atcEntry;
 	}
 
+	@Override
+	public String toString() {
+		return "OCLG [clgCode=" + clgCode + ", cardCode=" + cardCode
+				+ ", notes=" + notes + ", cntctDate=" + cntctDate
+				+ ", cntctTime=" + cntctTime + ", recontact=" + recontact
+				+ ", Closed=" + Closed + ", closeDate=" + closeDate
+				+ ", contactPer=" + contactPer + ", tel=" + tel + ", fax="
+				+ fax + ", cntctSbjct=" + cntctSbjct + ", transfered="
+				+ transfered + ", DocType=" + DocType + ", docNum=" + docNum
+				+ ", docEntry=" + docEntry + ", attachment=" + attachment
+				+ ", dataSource=" + dataSource + ", attendUser=" + attendUser
+				+ ", cntctCode=" + cntctCode + ", userSign=" + userSign
+				+ ", slpCode=" + slpCode + ", action=" + action + ", details="
+				+ details + ", cntctType=" + cntctType + ", location="
+				+ location + ", beginTime=" + beginTime + ", duration="
+				+ duration + ", durType=" + durType + ", endTime=" + endTime
+				+ ", priority=" + priority + ", reminder=" + reminder
+				+ ", remQty=" + remQty + ", remType=" + remType + ", oprId="
+				+ oprId + ", oprLine=" + oprLine + ", remDate=" + remDate
+				+ ", remTime=" + remTime + ", remSented=" + remSented
+				+ ", instance=" + instance + ", endDate=" + endDate
+				+ ", status=" + status + ", personal=" + personal
+				+ ", inactive=" + inactive + ", tentative=" + tentative
+				+ ", street=" + street + ", city=" + city + ", country="
+				+ country + ", state=" + state + ", room=" + room
+				+ ", parentType=" + parentType + ", parentId=" + parentId
+				+ ", prevActvty=" + prevActvty + ", atcEntry=" + atcEntry + "]";
+	}
 }

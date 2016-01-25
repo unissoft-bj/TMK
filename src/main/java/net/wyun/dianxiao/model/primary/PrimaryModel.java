@@ -14,8 +14,8 @@ public class PrimaryModel {
 	
 	@Id
 	@Column(name = "ID", unique = true, nullable = false)
-	@SequenceGenerator(name = "PRIMARY_MODEL_ID", sequenceName = "PRIMARY_MODEL_SEQ_ID", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PRIMARY_MODEL_ID")
+	//@SequenceGenerator(name = "PRIMARY_MODEL_ID", sequenceName = "PRIMARY_MODEL_SEQ_ID", allocationSize = 1)
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PRIMARY_MODEL_ID")
 	private int id;
 	
 	@Column(name = "name", nullable = false)
