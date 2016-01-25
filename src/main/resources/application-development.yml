@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    primary:
+      initialize: false
+      url: jdbc:mysql://localhost:3306/A002?useUnicode=yes&characterEncoding=gbk
+      username: root
+      password: ils
+      driver-class-name: com.mysql.jdbc.Driver
+    secondary:
+      initialize: false
+      url: jdbc:h2:mem:secondary
+      username: sa
+      password:
+      driver-class-name: org.h2.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        show_sql: true
+        format_sql: true
+        generate_statistics: false
+        id.new_generator_mappings: true
+        order_updates: true
+        default_batch_fetch_size: 4
+        max_fetch_depth: 2
+flyway:
+  enabled: false
+  primary: 
+    location: classpath:db/migration/primary
+  secondary:
+    location: classpath:db/migration/secondary
+dianxiao:
+    record:
+        directory: /usr/share/record/pbxrecord
+    target:
+        directory: /opt/tmk/record
+    agent:
+        table: 234:刘明明,235:李文
