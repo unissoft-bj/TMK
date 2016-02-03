@@ -1,6 +1,7 @@
 package net.wyun;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import net.wyun.dianxiao.DianxiaoApplication;
 
 import org.junit.Before;
 import org.junit.Test;
