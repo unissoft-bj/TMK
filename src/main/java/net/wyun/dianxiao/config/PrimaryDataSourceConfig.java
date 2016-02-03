@@ -4,6 +4,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(entityManagerFactoryRef = "PRIMARY_ENTITY_MANAGER_FACTORY", 
 		transactionManagerRef = "PRIMARY_PLATFORM_TX_MANAGER", basePackages = { "net.wyun.dianxiao.repository.primary" })
 public class PrimaryDataSourceConfig {
+	private static final Logger logger = LoggerFactory.getLogger(PrimaryDataSourceConfig.class);
 
 	public static final String PREFIX_PRIMARY = DataSourceProperties.PREFIX + ".primary";
 	public static final String PRIMARY_PERSISTENCE_UNIT = "PRIMARY_PERSISTENCE_UNIT";
@@ -34,7 +38,10 @@ public class PrimaryDataSourceConfig {
 	@Primary
 	@ConfigurationProperties(prefix = PREFIX_PRIMARY)
 	public DataSource primaryDataSource() {
-		return DataSourceBuilder.create().build();
+		logger.info("create primary data source: " + PREFIX_PRIMARY);
+		DataSource ds = DataSourceBuilder.create().build();
+		logger.debug("primary datasource info: " + ds.toString());
+		return ds;
 	}
 
 	@Bean(name = PRIMARY_ENTITY_MANAGER)
