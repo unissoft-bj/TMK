@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 
 import net.wyun.dianxiao.model.CallDirection;
+import net.wyun.dianxiao.service.primary.MP3FileHandler;
 import net.wyun.dianxiao.service.secondary.SalesAgentLookUpService;
 
 import java.nio.file.Files;
@@ -37,13 +38,12 @@ public class SalesCallMonitor {
 
 	@Value("${dianxiao.target.directory}")
 	private String targetDir;
+	
+	@Autowired
+	MP3FileHandler mp3FileHandler;
 
 	DirectoryWatchService directoryWatchService;
-	private static final Logger logger = LoggerFactory
-			.getLogger(SalesCallMonitor.class);
-
-	@Autowired
-	ActivityPersistor activityPersistor;
+	private static final Logger logger = LoggerFactory.getLogger(SalesCallMonitor.class);
 
 	public SalesCallMonitor() {
 		logger.info("create SalesCallMonitor.");
@@ -62,49 +62,7 @@ public class SalesCallMonitor {
 						if (!FileProcessUtil.isFile(path)) 			return;
 						if (!path.toString().endsWith(".mp3"))		return;
 
-						// we have a mp3 file
-						// 1. remove those internal calls
-						String fileName = FileProcessUtil.extractFileName(path
-								.toString());
-						List<String> list = FileProcessUtil.process(fileName);
-						CallDirection direction = activityPersistor.getCallDirection(list);
-						
-						if (direction == CallDirection.INTERNAL) {
-							// remove audio file
-							try {
-								Files.delete(path);
-							} catch (IOException e) {
-								logger.error(e.getLocalizedMessage());
-								e.printStackTrace();
-							}
-							return;
-
-						}
-
-						// either IN or OUT, an activity should be recorded
-						// move audio to target dir
-						String source = path.toString();
-						String target = source.replace(directory, targetDir);
-						
-						//first persist data to database
-						list.add(target);
-						logger.info("persist activity now ...");
-						activityPersistor.persist(direction, list);
-						logger.info("persist activity done.");
-						
-						try {
-							TimeUnit.SECONDS.sleep(4);
-						} catch (InterruptedException e1) {		}
-						
-						try {
-							FileProcessUtil.move(source, target);
-							logger.info("moving file done. file now at: " + target);
-						} catch (IOException e) {
-							logger.error(e.getLocalizedMessage());
-							e.printStackTrace();
-						}
-						
-
+						mp3FileHandler.onEvent(path);
 					}
 
 					@Override

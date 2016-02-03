@@ -11,8 +11,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import net.wyun.dianxiao.model.CallDirection;
@@ -31,7 +32,10 @@ import net.wyun.dianxiao.service.secondary.SalesAgentLookUpService;
 @Component
 public class ActivityPersistorDBImpl implements ActivityPersistor{
 	
+	private static final Logger logger = LoggerFactory.getLogger(ActivityPersistorDBImpl.class);
 	private final static int ACTIVITY_START_INDEX = 100000000;
+	private final static String CALL_IN = "呼入";
+	private final static String CALL_OUT = "呼出";
 	
 	@Autowired
 	OCLGRepository oclgRepo;
@@ -54,14 +58,26 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
        24578
        cg
        /opt/tmk/record/dysoft/20151218/230_18833500052_20151218-102537_24578_cg.mp3
+       duration for sweeper
 	 */
 	@Override
 	public void persist(CallDirection direction, List<String> list) {
+		OCLG oclg = this.generateOCLG(direction, list);	
+		
+		// if(list.size() == 8){
+		int sec = Integer.parseInt(list.get(7));
+		double minute = (double) (sec / 60.0);
+		oclg.setDuration(new BigDecimal(minute));
+		// }
+		oclgRepo.save(oclg);
+	}
+	
+	private OCLG generateOCLG(CallDirection direction, List<String> list){
 		OCLG oclg = new OCLG();
 		int clgCode = this.nextClgCode();
 		oclg.setClgCode(clgCode);
 		
-		oclg.setNotes(list.get(6));
+		oclg.setNotes(list.get(6)); //mp3 file path
 		
 		String date = list.get(2);
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -89,7 +105,7 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 			phoneExt = list.get(1);
 		}
 		String userName = this.agentLookUpService.getUserNameByPhoneExt(phoneExt);
-		
+		logger.debug("user name: " + userName);
 		OUSR ousr = ousrRepo.findByUName(userName);
 		short userId = ousr.getUSERID();
 		oclg.setAttendUser(userId);
@@ -99,9 +115,9 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 		
 		oclg.setAction("C");
 		
-		String details = "呼入";
+		String details = CALL_IN;
 		if(direction == CallDirection.OUT){
-			details = "呼出";
+			details = CALL_OUT;
 		}
 		oclg.setDetails(details);
 		
@@ -115,8 +131,7 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 		oclg.seteNDTime(endTime);
 		
 		oclg.setPersonal("N");
-		
-		oclgRepo.save(oclg);
+		return oclg;
 	}
 	
 	public int getEndTime(Date now){
