@@ -1,17 +1,30 @@
 package net.wyun.dianxiao.model;
 
 public enum CallDirection {
-	IN(""),
-	OUT(""),
-	INTERNAL("");
+	IN((short) 1),
+	OUT((short) 2),
+	INTERNAL((short) 3);
 	
-	String code;
-	CallDirection(String code){
+	private short code;
+	private CallDirection(short code){
 		this.code = code;
 	}
 	
-	String getCode(){
+	public Short getCode(){
 		return code;
+	}
+	
+	public static CallDirection getCallDirection(Short code) {
+		if (code == null) {
+			return null;
+		}
+
+		for (CallDirection direction : CallDirection.values()) {
+			if (code.equals(direction.getCode())) {
+				return direction;
+			}
+		}
+		throw new IllegalArgumentException("No matching type for id " + code);
 	}
 
 }
