@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.flyway.FlywayDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +26,7 @@ public class FlywayConfig {
 	private FlywayConfiguration flywayConfiguration;
 
 	@Bean(initMethod = "migrate")
+	@ConditionalOnProperty(prefix = "flyway", name = "enabled", matchIfMissing = true)
 	@FlywayDataSource
 	@Primary
 	public Flyway primaryFlyway() {
@@ -33,7 +35,6 @@ public class FlywayConfig {
 		flyway.setDataSource(primaryDataSource);
 		flyway.setLocations(flywayConfiguration.getPrimary().getLocation());
 		flyway.setEncoding("GBK");
-		
 		return flyway;
 	}
 	
