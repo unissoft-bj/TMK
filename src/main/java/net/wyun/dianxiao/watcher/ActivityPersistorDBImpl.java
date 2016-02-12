@@ -34,8 +34,6 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	
 	private static final Logger logger = LoggerFactory.getLogger(ActivityPersistorDBImpl.class);
 	private final static int ACTIVITY_START_INDEX = 100000000;
-	private final static String CALL_IN = "呼入";
-	private final static String CALL_OUT = "呼出";
 	
 	@Autowired
 	OCLGRepository oclgRepo;
@@ -63,21 +61,16 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	@Override
 	public void persist(CallDirection direction, List<String> list) {
 		OCLG oclg = this.generateOCLG(direction, list);	
-		
-		// if(list.size() == 8){
-		int sec = Integer.parseInt(list.get(7));
-		double minute = (double) (sec / 60.0);
-		oclg.setDuration(new BigDecimal(minute));
-		// }
 		oclgRepo.save(oclg);
 	}
 	
+	private final static String CARD_CODE = "E000009";
 	private OCLG generateOCLG(CallDirection direction, List<String> list){
 		OCLG oclg = new OCLG();
+		oclg.setCardCode(CARD_CODE);
 		int clgCode = this.nextClgCode();
 		oclg.setClgCode(clgCode);
-		
-		oclg.setNotes(list.get(6)); //mp3 file path
+	//	oclg.setDetails(list.get(6)); //mp3 file path; notes for speech recognition data; details varchar 60, too short
 		
 		String date = list.get(2);
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
@@ -88,6 +81,8 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 			e.printStackTrace();
 		}
 		oclg.setCntctDate(callDate);
+		oclg.setRecontact(callDate);
+		oclg.setCloseDate(callDate);  //for sap requirement
 		
 		int cntctTime = this.getCntctTime(list.get(3));
 		oclg.setCntctTime(cntctTime);
@@ -114,29 +109,35 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 		oclg.setSlpCode(oslp.getSlpCode());
 		
 		oclg.setAction("C");
+		oclg.setCntctType(direction); //呼入/呼出
 		
-		String details = CALL_IN;
-		if(direction == CallDirection.OUT){
-			details = CALL_OUT;
-		}
-		oclg.setDetails(details);
+		Date end = new Date();
+		Date begin = new Date();
+		//BigDecimal duration = this.calcDuration(list.get(2) + "-" + list.get(3), now);
+		int sec = Integer.parseInt(list.get(7));
+		double minute = (double) (sec / 60.0);
+		oclg.setDuration(new BigDecimal(minute));
 		
-		oclg.setBeginTime(cntctTime);
-		
-		Date now = new Date();
-		BigDecimal duration = this.calcDuration(list.get(2) + "-" + list.get(3), now);
-		oclg.setDuration(duration);
-		
-		int endTime = this.getEndTime(now);
+		end.setTime(end.getTime() - 5000); // 5 seconds ago
+		int endTime = this.getTimeInInt(end);
 		oclg.seteNDTime(endTime);
+		
+	    begin.setTime(begin.getTime() - 5000 - sec * 1000);
+	    int beginTime = this.getTimeInInt(begin);
+	    oclg.setBeginTime(beginTime);
+	
 		
 		oclg.setPersonal("N");
 		return oclg;
 	}
-	
-	public int getEndTime(Date now){
+	/**
+	 * for example 1015 ==> 10:15am
+	 * @param date
+	 * @return
+	 */
+	public int getTimeInInt(Date date){
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmm");
-		String dt = dateFormat.format(now);
+		String dt = dateFormat.format(date);
 		String[] time = dt.split("-");
 		return Integer.parseInt(time[1]);
 	}
@@ -191,7 +192,6 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	
 	@Override
 	public CallDirection getCallDirection(List<String> list) {
-
 		return agentLookUpService.getCallDirection(list);
 	}
 }
