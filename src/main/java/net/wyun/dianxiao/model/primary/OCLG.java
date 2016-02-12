@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import net.wyun.dianxiao.model.CallDirection;
+
 /**
  * @author michael
  *
@@ -47,7 +49,7 @@ public class OCLG {
 	short slpCode; //  smallint NULL ,
 	String action; //  char(1) NULL ,
 	String details; //  varchar(60) NULL ,
-	short cntctType; //  smallint NULL ,
+	Short cntctType; //  smallint NULL ,
 	short location; //  smallint NULL ,
 	Integer beginTime; //  int NULL ,
 	BigDecimal duration; //  decimal(19,6) NULL ,
@@ -221,11 +223,15 @@ public class OCLG {
 	public void setDetails(String details) {
 		this.details = details;
 	}
-	public short getCntctType() {
+	public Short getCntctType() {
 		return cntctType;
 	}
-	public void setCntctType(short cntctType) {
-		this.cntctType = cntctType;
+	public void setCntctType(CallDirection direction) {
+		if(direction == null) {
+			this.cntctType = null;
+		}else{
+			this.cntctType = direction.getCode();
+		}
 	}
 	public short getLocation() {
 		return location;
