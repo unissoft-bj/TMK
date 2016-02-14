@@ -14,15 +14,18 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.wyun.dianxiao.model.CallDirection;
 import net.wyun.dianxiao.model.primary.ATC1;
+import net.wyun.dianxiao.model.primary.OATC;
 import net.wyun.dianxiao.model.primary.OCLG;
 import net.wyun.dianxiao.model.primary.OSLP;
 import net.wyun.dianxiao.model.primary.OUSR;
 import net.wyun.dianxiao.repository.primary.ATC1Repository;
+import net.wyun.dianxiao.repository.primary.OATCRepository;
 import net.wyun.dianxiao.repository.primary.OCLGRepository;
 import net.wyun.dianxiao.repository.primary.OSLPRepository;
 import net.wyun.dianxiao.repository.primary.OUSRRepository;
@@ -51,6 +54,10 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	ATC1Repository atc1Repo;
 	
 	@Autowired
+	OATCRepository oatcRepo;
+	
+	@Autowired
+	@Qualifier("lookupServiceDBImpl")
 	SalesAgentLookUpService agentLookUpService;
 
 	/**
@@ -67,11 +74,15 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	@Override
 	@Transactional
 	public void persist(CallDirection direction, List<String> list) {
+		int absEntry = this.nextAtcEntry();
+		this.oatcRepo.save(new OATC(absEntry));
+		
 		OCLG oclg = this.generateOCLG(direction, list);	
+		oclg.setAtcEntry(absEntry);
 		oclg = oclgRepo.save(oclg);
 		ATC1 atc1 = this.generateATC1(direction, list);
 		atc1.setDateTime(oclg.getCntctDate());
-		atc1.setAbsEntry(oclg.getAtcEntry());
+		atc1.setAbsEntry(absEntry);
 		atc1.setUserId(oclg.getAttendUser());
 		this.atc1Repo.save(atc1);
 	}
@@ -126,14 +137,20 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 		if(direction == CallDirection.IN){
 			phoneExt = list.get(1);
 		}
+		//the phoneExt has been checked before, so userName should be available
 		String userName = this.agentLookUpService.getUserNameByPhoneExt(phoneExt);
 		logger.debug("user name: " + userName);
 		OUSR ousr = ousrRepo.findByUName(userName);
+		
 		short userId = ousr.getUSERID();
 		oclg.setAttendUser(userId);
 		
 		OSLP oslp = oslpRepo.findBySlpName(userName);
-		oclg.setSlpCode(oslp.getSlpCode());
+		if(null == oslp){
+			oclg.setSlpCode((short)-1);
+		}else{
+			oclg.setSlpCode(oslp.getSlpCode());
+		}
 		
 		oclg.setAction("C");
 		oclg.setCntctType(direction); //呼入/呼出
@@ -154,8 +171,6 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	    oclg.setBeginTime(beginTime);
 		oclg.setPersonal("N");
 		
-		int absEntry = this.nextAtcEntry();
-		oclg.setAtcEntry(absEntry);
 		return oclg;
 	}
 	
@@ -246,7 +261,7 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	 * @return
 	 */
 	public synchronized int nextAtcEntry(){
-		int key = oclgRepo.findMaxAtcEntry();
+		int key = oatcRepo.findMaxAbsEntry();  //atcEntry = absEntry?
 		if(key < ACTIVITY_START_INDEX){
 			return ACTIVITY_START_INDEX + 1;
 		}
