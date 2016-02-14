@@ -16,13 +16,13 @@ import java.util.concurrent.BlockingQueue;
 
 import javax.annotation.PostConstruct;
 
+import net.wyun.dianxiao.config.TMKProperties;
 import net.wyun.dianxiao.watcher.FileFinder;
 import net.wyun.util.SysInfoUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -37,8 +37,10 @@ public class MP3Sweeper {
 
 	private static final Logger logger = LoggerFactory.getLogger(MP3Sweeper.class);
 	
-	@Value("${dianxiao.record.directory}")
+	@Autowired
+	private TMKProperties tmkProperties;
 	private String directory;
+	
 	private final static String pattern = "*.mp3";
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
@@ -78,6 +80,7 @@ public class MP3Sweeper {
 	@PostConstruct
     public void init() {
 		logger.info("mp3 sweeper scheduler: initialising ...");
+		directory = tmkProperties.getSrcDir();
 		logger.info("record directory: " + this.directory);
 	}
 
