@@ -23,7 +23,7 @@ public class ActivityPersistorDBImplTest extends BaseSpringTestRunner {
 
 	@Test
 	public void testGetEndTime() {
-		int endTime = activityPersistor.getEndTime(new Date());
+		int endTime = activityPersistor.getTimeInInt(new Date());
 		System.out.println("current time (hour minute: " + endTime);
 	}
 
