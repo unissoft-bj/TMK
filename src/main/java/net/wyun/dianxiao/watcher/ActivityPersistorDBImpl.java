@@ -3,8 +3,8 @@
  */
 package net.wyun.dianxiao.watcher;
 
+import java.io.File;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,11 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import net.wyun.dianxiao.model.CallDirection;
+import net.wyun.dianxiao.model.primary.ATC1;
 import net.wyun.dianxiao.model.primary.OCLG;
 import net.wyun.dianxiao.model.primary.OSLP;
 import net.wyun.dianxiao.model.primary.OUSR;
+import net.wyun.dianxiao.repository.primary.ATC1Repository;
 import net.wyun.dianxiao.repository.primary.OCLGRepository;
 import net.wyun.dianxiao.repository.primary.OSLPRepository;
 import net.wyun.dianxiao.repository.primary.OUSRRepository;
@@ -45,6 +48,9 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	OUSRRepository ousrRepo;
 	
 	@Autowired
+	ATC1Repository atc1Repo;
+	
+	@Autowired
 	SalesAgentLookUpService agentLookUpService;
 
 	/**
@@ -59,9 +65,34 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
        duration for sweeper
 	 */
 	@Override
+	@Transactional
 	public void persist(CallDirection direction, List<String> list) {
 		OCLG oclg = this.generateOCLG(direction, list);	
-		oclgRepo.save(oclg);
+		oclg = oclgRepo.save(oclg);
+		ATC1 atc1 = this.generateATC1(direction, list);
+		atc1.setDateTime(oclg.getCntctDate());
+		atc1.setAbsEntry(oclg.getAtcEntry());
+		atc1.setUserId(oclg.getAttendUser());
+		this.atc1Repo.save(atc1);
+	}
+	
+	public ATC1 generateATC1(CallDirection direction, List<String> list){
+		ATC1 atc1 = new ATC1();
+		
+		atc1.setLine(1);
+		String path = list.get(6);
+		logger.debug("path: " + path);
+		
+		File file = new File(path);
+		String parentPath = file.getAbsoluteFile().getParent();
+		atc1.setSrcPath(parentPath);
+		atc1.setTrgtPath(parentPath);
+		
+		String fileName = FileProcessUtil.extractFileName(path);
+		atc1.setFileName(fileName);
+		atc1.setFileExt("mp3");
+		
+		return atc1;
 	}
 	
 	private final static String CARD_CODE = "E000009";
@@ -73,16 +104,10 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	//	oclg.setDetails(list.get(6)); //mp3 file path; notes for speech recognition data; details varchar 60, too short
 		
 		String date = list.get(2);
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-		Date callDate = null;
-		try {
-			callDate = dateFormat.parse(date);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		Date callDate = this.getActDate(date);
 		oclg.setCntctDate(callDate);
 		oclg.setRecontact(callDate);
-		oclg.setCloseDate(callDate);  //for sap requirement
+		oclg.setEndDate(callDate);  //for sap requirement
 		
 		int cntctTime = this.getCntctTime(list.get(3));
 		oclg.setCntctTime(cntctTime);
@@ -94,6 +119,8 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 			tel = list.get(1);
 		}
 		oclg.setTel(tel);
+		
+		oclg.setAttachment(list.get(6));
 		
 		String phoneExt = list.get(0);
 		if(direction == CallDirection.IN){
@@ -111,24 +138,36 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 		oclg.setAction("C");
 		oclg.setCntctType(direction); //呼入/呼出
 		
-		Date end = new Date();
-		Date begin = new Date();
+		Date end = getRecordEndTime(list.get(2) + "-" + list.get(3));
+		
 		//BigDecimal duration = this.calcDuration(list.get(2) + "-" + list.get(3), now);
-		int sec = Integer.parseInt(list.get(7));
-		double minute = (double) (sec / 60.0);
+		int durationInSec = Integer.parseInt(list.get(7));
+		double minute = (double) (durationInSec / 60.0);
 		oclg.setDuration(new BigDecimal(minute));
 		
-		end.setTime(end.getTime() - 5000); // 5 seconds ago
+		Date begin = new Date();
+		begin.setTime(end.getTime() - durationInSec * 1000); // 5 seconds ago
 		int endTime = this.getTimeInInt(end);
 		oclg.seteNDTime(endTime);
 		
-	    begin.setTime(begin.getTime() - 5000 - sec * 1000);
 	    int beginTime = this.getTimeInInt(begin);
 	    oclg.setBeginTime(beginTime);
-	
-		
 		oclg.setPersonal("N");
+		
+		int absEntry = this.nextAtcEntry();
+		oclg.setAtcEntry(absEntry);
 		return oclg;
+	}
+	
+	private Date getActDate(String str){
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+		Date callDate = null;
+		try {
+			callDate = dateFormat.parse(str);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return callDate;
 	}
 	/**
 	 * for example 1015 ==> 10:15am
@@ -147,6 +186,7 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	 * @param dateTime
 	 * @return
 	 */
+	@Deprecated
 	public BigDecimal calcDuration(String dateTime /* yyyyMMdd-HHmmss */, Date now ){
 		
 		BigDecimal duration;
@@ -177,6 +217,17 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 		String hm = time.substring(0,4);
 		return Integer.parseInt(hm);
 	}
+	
+	public Date getRecordEndTime(String dateTime){
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd-HHmmss");
+	    Date date = null;
+		try {
+			date = dateFormat.parse(dateTime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+        return date;
+	}
 
 	/**
 	 * need synchronize this call
@@ -184,6 +235,18 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	 */
 	public synchronized int nextClgCode(){
 		int key = oclgRepo.findMaxClgCode();
+		if(key < ACTIVITY_START_INDEX){
+			return ACTIVITY_START_INDEX + 1;
+		}
+		return (key + 1);
+	}
+	
+	/**
+	 * need synchronize this call
+	 * @return
+	 */
+	public synchronized int nextAtcEntry(){
+		int key = oclgRepo.findMaxAtcEntry();
 		if(key < ACTIVITY_START_INDEX){
 			return ACTIVITY_START_INDEX + 1;
 		}
