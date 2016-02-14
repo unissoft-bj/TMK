@@ -26,6 +26,7 @@ public class OCLG {
 	@Id
 	@Column(name = "ClgCode", unique = true, nullable = false)
 	int clgCode; //  int NOT NULL ,
+	
 	String cardCode; //  varchar(15) NULL ,
 	String notes; //  longtext NULL ,
 	Date cntctDate; //  datetime NULL ,
