@@ -1,0 +1,13 @@
+CREATE TABLE `ATC1` (
+  `AbsEntry` INT NOT NULL,
+  `Line` INT NOT NULL,
+  `srcPath` LONGTEXT CHARACTER SET utf8,
+  `trgtPath` LONGTEXT CHARACTER SET utf8,
+  `FileName` VARCHAR(254) CHARACTER SET utf8,
+  `FileExt` VARCHAR(8) CHARACTER SET utf8,
+  `Date` DATETIME,
+  `UsrID` INT,
+  `Copied` VARCHAR(1) CHARACTER SET utf8 DEFAULT 'N',
+  `Override` VARCHAR(1) CHARACTER SET utf8 DEFAULT 'N',
+  PRIMARY KEY (`AbsEntry`, `Line`)
+) charset gbk, ENGINE=InnoDB;
