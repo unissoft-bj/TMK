@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import net.wyun.dianxiao.config.TMKProperties;
 import net.wyun.dianxiao.model.CallDirection;
 import net.wyun.dianxiao.watcher.ActivityPersistor;
 import net.wyun.dianxiao.watcher.FileProcessUtil;
@@ -19,17 +20,13 @@ import net.wyun.dianxiao.watcher.FileProcessUtil;
 @Component
 public class MP3FileHandlerImpl implements MP3FileHandler {
 	
-	@Value("${dianxiao.record.directory}")
-	private String directory;
-
-	@Value("${dianxiao.target.directory}")
-	private String targetDir;
+	@Autowired
+	TMKProperties tmkProperties;
 	
 	@Autowired
 	ActivityPersistor activityPersistor;
 
 	private static final Logger logger = LoggerFactory.getLogger(MP3FileHandlerImpl.class);
-
 
 	/**
 	 * file path
@@ -51,13 +48,14 @@ public class MP3FileHandlerImpl implements MP3FileHandler {
 		// either IN or OUT, an activity should be recorded
 		// move audio to target dir
 		String source = path.toString();
-		String target = source.replace(directory, targetDir);
+		String target = source.replace(tmkProperties.getSrcDir(), tmkProperties.getTargetDir());
 		
 		list.add(target);
 		
 		try {
 			TimeUnit.SECONDS.sleep(5);
 			int duration = this.estimateDuration(path);
+			logger.debug("duration estimation(sec): " + duration);
 			list.add("" + duration);
 			FileProcessUtil.move(source, target);
 			logger.info("moving file done. file now at: " + target);
@@ -76,7 +74,7 @@ public class MP3FileHandlerImpl implements MP3FileHandler {
 
 	}
 	
-	int estimateDuration(Path path){
+    int estimateDuration(Path path){
 		//here get the file size
 		long fileSize = path.toFile().length();
 		int duration = (int) (fileSize/1000);
