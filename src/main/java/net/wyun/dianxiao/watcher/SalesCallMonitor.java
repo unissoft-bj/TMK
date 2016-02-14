@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
+import net.wyun.dianxiao.config.TMKProperties;
 import net.wyun.dianxiao.model.CallDirection;
 import net.wyun.dianxiao.service.primary.MP3FileHandler;
 import net.wyun.dianxiao.service.secondary.SalesAgentLookUpService;
@@ -33,11 +34,8 @@ import com.sentaca.watcher.DirectoryEventListenerAdapter;
 @Service
 public class SalesCallMonitor {
 
-	@Value("${dianxiao.record.directory}")
-	private String directory;
-
-	@Value("${dianxiao.target.directory}")
-	private String targetDir;
+	@Autowired
+	TMKProperties tmkProperties;
 	
 	@Autowired
 	MP3FileHandler mp3FileHandler;
@@ -74,7 +72,7 @@ public class SalesCallMonitor {
 					public void onWatcherClosed(String dir) {
 						logger.info("Watcher removed: " + dir);
 					}
-				}, this.directory);
+				}, this.tmkProperties.getSrcDir());
 	}
 
 	public void startWatching() throws Exception {
@@ -82,7 +80,7 @@ public class SalesCallMonitor {
 		directoryWatchService.watch();
 
 		// Thread.sleep(10000000);
-		logger.info("monitoring directory: " + directory);
+		logger.info("monitoring directory: " + tmkProperties.getSrcDir());
 		// TimeUnit.SECONDS.sleep(60);
 	}
 
