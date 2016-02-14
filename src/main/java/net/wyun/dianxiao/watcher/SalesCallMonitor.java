@@ -60,6 +60,7 @@ public class SalesCallMonitor {
 						if (!FileProcessUtil.isFile(path)) 			return;
 						if (!path.toString().endsWith(".mp3"))		return;
 
+						logger.info("new CREATE event, Processing ...");
 						mp3FileHandler.onEvent(path);
 					}
 
