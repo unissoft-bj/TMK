@@ -101,7 +101,12 @@ public class FileProcessUtilTest {
 		assertEquals("/opt/tmk/record/dysoft/20151218/230_18833500052_20151218-102537_24578_cg.mp3", target);
 	}
 	
-	  
+	@Test
+	public void testGetParentPath(){
+		File file = new File("/opt/tmk/record/dysoft/20151218/230_18833500052_20151218-102537_24578_cg.mp3");
+		String parentPath = file.getAbsoluteFile().getParent();
+		System.out.println(parentPath);
+	}
 	  
 	
 	
