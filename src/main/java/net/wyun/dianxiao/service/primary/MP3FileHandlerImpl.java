@@ -41,6 +41,7 @@ public class MP3FileHandlerImpl implements MP3FileHandler {
 		CallDirection direction = activityPersistor.getCallDirection(list);
 		
 		if (direction == CallDirection.INTERNAL) {
+			logger.info("internal call");
 			deleteFile(path);
 			return;
 		}
