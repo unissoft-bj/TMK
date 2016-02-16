@@ -2,8 +2,6 @@ package net.wyun.dianxiao.config;
 
 import javax.sql.DataSource;
 
-import net.wyun.dianxiao.service.primary.MP3FileHandlerImpl;
-
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
