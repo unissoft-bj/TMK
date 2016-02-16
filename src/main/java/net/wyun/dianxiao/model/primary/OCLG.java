@@ -188,10 +188,10 @@ public class OCLG {
 	public void setDataSource(String dataSource) {
 		this.dataSource = dataSource;
 	}
-	public short getAttendUser() {
+	public Short getAttendUser() {
 		return attendUser;
 	}
-	public void setAttendUser(short attendUser) {
+	public void setAttendUser(Short attendUser) {
 		this.attendUser = attendUser;
 	}
 	public int getCntctCode() {
