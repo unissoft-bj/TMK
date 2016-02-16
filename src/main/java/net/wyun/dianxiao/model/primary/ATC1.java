@@ -29,7 +29,7 @@ public class ATC1 {
 	String fileName; // `FileName` VARCHAR(254) CHARACTER SET utf8,
 	String fileExt;  // `FileExt` VARCHAR(8) CHARACTER SET utf8,
 	Date date;   // `Date` DATETIME,
-	int usrID;      // `UsrID` INT,
+	Integer usrID;      // `UsrID` INT,
 	String copied;   // `Copied` VARCHAR(1) CHARACTER SET utf8 DEFAULT 'N',
 	String overRide; // `Override` VARCHAR(1) CHARACTER SET utf8 DEFAULT 'N',
 	                 // PRIMARY KEY (`AbsEntry`, `Line`)
@@ -75,10 +75,10 @@ public class ATC1 {
 	public void setDateTime(Date dateTime) {
 		this.date = dateTime;
 	}
-	public int getUserId() {
+	public Integer getUserId() {
 		return usrID;
 	}
-	public void setUserId(int userId) {
+	public void setUserId(Integer userId) {
 		this.usrID = userId;
 	}
 	public String getCopied() {
