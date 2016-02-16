@@ -40,10 +40,10 @@ public class MP3FileHandlerImpl implements MP3FileHandler {
 		List<String> list = FileProcessUtil.process(fileName);
 		CallDirection direction = activityPersistor.getCallDirection(list);
 		
-		if (direction == CallDirection.INTERNAL) {
+		if (direction == CallDirection.NOTSET) {
 			logger.info("internal call");
-			deleteFile(path);
-			return;
+			//deleteFile(path);
+			//return;
 		}
 
 		// either IN or OUT, an activity should be recorded
