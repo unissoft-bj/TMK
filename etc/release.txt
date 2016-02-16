@@ -1,0 +1,5 @@
+2016-02-16, V0.0.8 release
+1，从sap中动态获取分机号集合
+2，录音文件名解析中，如果存在SAP未知分机号，则activity的userid=null，slpcode=-1（见https://github.com/unissoft-bj/TMK/issues/9#issue-131241783）
+3，内部通话的判断逻辑，是否正确（可以不检测，所有通话都写到sap的activity）
+4，production版本的sap数据库为A002
