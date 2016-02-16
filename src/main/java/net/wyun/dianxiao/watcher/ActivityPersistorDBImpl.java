@@ -83,7 +83,11 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 		ATC1 atc1 = this.generateATC1(direction, list);
 		atc1.setDateTime(oclg.getCntctDate());
 		atc1.setAbsEntry(absEntry);
-		atc1.setUserId(oclg.getAttendUser());
+		Short attendUser = oclg.getAttendUser();
+		if(attendUser != null){
+			atc1.setUserId(new Integer(attendUser));
+		}
+		
 		this.atc1Repo.save(atc1);
 	}
 	
@@ -124,32 +128,12 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 		oclg.setCntctTime(cntctTime);
 		
 		oclg.setClosed("N");  //means not closed NO
-		
-		String tel = list.get(0);
-		if(direction == CallDirection.OUT){
-			tel = list.get(1);
-		}
-		oclg.setTel(tel);
-		
 		oclg.setAttachment(list.get(6));
-		
-		String phoneExt = list.get(0);
-		if(direction == CallDirection.IN){
-			phoneExt = list.get(1);
-		}
-		//the phoneExt has been checked before, so userName should be available
-		String userName = this.agentLookUpService.getUserNameByPhoneExt(phoneExt);
-		logger.debug("user name: " + userName);
-		OUSR ousr = ousrRepo.findByUName(userName);
-		
-		short userId = ousr.getUSERID();
-		oclg.setAttendUser(userId);
-		
-		OSLP oslp = oslpRepo.findBySlpName(userName);
-		if(null == oslp){
-			oclg.setSlpCode((short)-1);
+		//set tel, userid, and slpcode
+		if(direction == CallDirection.NOTSET){
+			this.handleNotSetPhoneExt(oclg, list);
 		}else{
-			oclg.setSlpCode(oslp.getSlpCode());
+			this.normalFlow(oclg, direction, list);
 		}
 		
 		oclg.setAction("C");
@@ -172,6 +156,49 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 		oclg.setPersonal("N");
 		
 		return oclg;
+	}
+	
+	/**
+	 * direction is NOTSET
+	 * @param oclg
+	 * @param list
+	 */
+	private void handleNotSetPhoneExt(OCLG oclg, List<String> list){
+		//direction is NOTSET
+		oclg.setTel(list.get(0) + "," + list.get(1));
+		oclg.setSlpCode((short) -1);
+	}
+	
+	/**
+	 * direction is IN or OUT
+	 * @param oclg
+	 * @param direction
+	 * @param list
+	 */
+	private void normalFlow(OCLG oclg, CallDirection direction, List<String> list){
+		String tel = list.get(0);
+		if(direction == CallDirection.IN){
+			tel = list.get(0);
+		}
+		oclg.setTel(tel);
+		
+		String phoneExt = list.get(0);
+		if(direction == CallDirection.IN){
+			phoneExt = list.get(1);
+		}
+		//the phoneExt has been checked before, so userName should be available
+		String userName = this.agentLookUpService.getUserNameByPhoneExt(phoneExt);
+		logger.debug("user name: " + userName);
+		OUSR ousr = ousrRepo.findByUName(userName); //TODO: it is a redundant call.
+		short userId = ousr.getUSERID();
+		oclg.setAttendUser(userId);
+		
+		OSLP oslp = oslpRepo.findBySlpName(userName);
+		if(null == oslp){
+			oclg.setSlpCode((short)-1);
+		}else{
+			oclg.setSlpCode(oslp.getSlpCode());
+		}
 	}
 	
 	private Date getActDate(String str){
