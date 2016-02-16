@@ -8,4 +8,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface OUSRRepository extends CrudRepository<OUSR, Integer>{
 
 	OUSR findByUName(String u_name);
+	OUSR findByFax(String fax);
 }
