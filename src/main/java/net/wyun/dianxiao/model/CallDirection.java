@@ -3,7 +3,7 @@ package net.wyun.dianxiao.model;
 public enum CallDirection {
 	IN((short) 1),
 	OUT((short) 2),
-	INTERNAL((short) 3);
+	NOTSET((short) 3);
 	
 	private short code;
 	private CallDirection(short code){
