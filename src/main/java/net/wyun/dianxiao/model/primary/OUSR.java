@@ -53,7 +53,8 @@ public class OUSR {
 	String DfltsGroup; //  varchar(8) NULL ,
 	String CashLimit; //  char(1) NULL ,
 	BigDecimal MaxCashSum; //  decimal(19,6) NULL ,
-	String Fax; //  varchar(20) NULL ,
+	@Column(name="Fax")
+	String fax; //  varchar(20) NULL ,
 	String SendFax; //  char(1) NULL ,
 	String Locked; //  char(1) NULL ,
 	short Department; //  smallint NULL ,
@@ -284,10 +285,10 @@ public class OUSR {
 		MaxCashSum = maxCashSum;
 	}
 	public String getFax() {
-		return Fax;
+		return fax;
 	}
 	public void setFax(String fax) {
-		Fax = fax;
+		this.fax = fax;
 	}
 	public String getSendFax() {
 		return SendFax;
@@ -609,7 +610,7 @@ public class OUSR {
 				+ (DfltsGroup != null ? "DfltsGroup=" + DfltsGroup + ", " : "")
 				+ (CashLimit != null ? "CashLimit=" + CashLimit + ", " : "")
 				+ (MaxCashSum != null ? "MaxCashSum=" + MaxCashSum + ", " : "")
-				+ (Fax != null ? "Fax=" + Fax + ", " : "")
+				+ (fax != null ? "Fax=" + fax + ", " : "")
 				+ (SendFax != null ? "SendFax=" + SendFax + ", " : "")
 				+ (Locked != null ? "Locked=" + Locked + ", " : "")
 				+ "Department="
