@@ -19,11 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ActivityPersistorDBImplTest extends BaseSpringTestRunner {
 	
 	@Autowired
-	ActivityPersistorDBImpl activityPersistor;
+	ActivityPersistor activityPersistor;
 
 	@Test
 	public void testGetEndTime() {
-		int endTime = activityPersistor.getTimeInInt(new Date());
+		ActivityPersistorDBImpl impl = new ActivityPersistorDBImpl();
+		int endTime = impl.getTimeInInt(new Date());
 		System.out.println("current time (hour minute: " + endTime);
 	}
 

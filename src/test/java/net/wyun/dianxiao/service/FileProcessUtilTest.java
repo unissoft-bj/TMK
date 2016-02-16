@@ -78,14 +78,14 @@ public class FileProcessUtilTest {
 		assertEquals("230_18833500052_20151218-102537_24578_cg", fileName);
 	}
 	
-	@Test
+	//@Test
 	public void moveFile() throws IOException{
 		String filePathName = "/usr/share/record/pbxrecord/dysoft/20151218/230_18833500052_20151218-102537_24578_cg.mp3";
 		String targetPath = "/opt/tmk/record/dysoft/20151218/230_18833500052_20151218-102537_24578_cg.mp3";
 		Files.move(Paths.get(filePathName), Paths.get(targetPath));
 	}
 	
-	@Test
+	//@Test
 	public void testMove() throws IOException{
 		String filePathName = "/usr/share/record/pbxrecord/dysoft/20151218/230_18833500052_20151218-102537_24578_cg.mp3";
 		String targetPath = "/opt/tmk/record/dysoft/20151218/230_18833500052_20151218-102537_24578_cg.mp3";
