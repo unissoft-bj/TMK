@@ -35,25 +35,36 @@ public class SalesAgentLookUpServiceDBImpl implements SalesAgentLookUpService {
 	@Autowired
 	OUSRRepository ousrRepo;
 	
+	public final static String UNKNOWN = "NOT_SET";
+	
 	@Override
 	public String getUserNameByPhoneExt(String phoneExt){
-		return userLookupTable.get(phoneExt).getUName();
+		String un = UNKNOWN;
+		if(userLookupTable.containsKey(phoneExt)){
+			un = userLookupTable.get(phoneExt).getUName();
+		}
+		return un;
 	}
 	
 	@Override
 	public CallDirection getCallDirection(List<String> list){
 		String tel1 = list.get(0);
 		String tel2 = list.get(1);
+		logger.info("tel1: " + tel1 + ", tel2: " + tel2);
+		CallDirection direction = CallDirection.NOTSET; //default
+		OUSR ousr = ousrRepo.findByFax(tel1);
 		
-		CallDirection direction = CallDirection.INTERNAL; //default
-		if(phoneExtSet.contains(tel1) && !phoneExtSet.contains(tel2)){
-		   //call out
+		if(null != ousr){
 			direction = CallDirection.OUT;
+			userLookupTable.put(tel1, ousr);
+			return direction;
 		}
 		
-		if(!phoneExtSet.contains(tel1) && phoneExtSet.contains(tel2)){
-		    //call in
-				direction = CallDirection.IN;
+		ousr = ousrRepo.findByFax(tel2);
+		if(null != ousr){
+			direction = CallDirection.IN;
+			userLookupTable.put(tel1, ousr);
+			return direction;
 		}
 		
 		return direction;
@@ -66,7 +77,7 @@ public class SalesAgentLookUpServiceDBImpl implements SalesAgentLookUpService {
 		Iterable<OUSR> users = ousrRepo.findAll();
 		for(OUSR user:users){
 			String fax = user.getFax();
-			logger.info("user: " + user.getUName() + ", fax" + fax + "locked: " + user.getLocked());
+			logger.info("user: " + user.getUName() + ", fax: " + fax + ", locked: " + user.getLocked());
 			if(user.getFax() != null && "N".equals(user.getLocked())){
 				phoneExtSet.add(user.getFax());
 				userLookupTable.put(user.getFax(), user);
