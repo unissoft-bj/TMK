@@ -24,8 +24,15 @@ public class OUSRRepositoryTest extends BaseSpringTestRunner {
 	}
 	
 	@Test
-	public void getOSLPByName(){
+	public void getOUSRByName(){
 		OUSR o = ousrRepository.findByUName("刘明明");
+		assertThat(o).isNotNull();
+		System.out.println(o.toString());
+	}
+	
+	@Test
+	public void getOUSRByFax(){
+		OUSR o = ousrRepository.findByFax("200");
 		assertThat(o).isNotNull();
 		System.out.println(o.toString());
 	}
