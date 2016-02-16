@@ -19,6 +19,7 @@ import net.wyun.dianxiao.model.CallDirection;
  * @author michael
  *
  */
+@Deprecated
 @Service
 public class SalesAgentLookUpServiceMapImpl implements SalesAgentLookUpService {
 	
