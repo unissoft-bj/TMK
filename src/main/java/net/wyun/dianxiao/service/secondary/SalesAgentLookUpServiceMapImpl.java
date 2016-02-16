@@ -45,7 +45,7 @@ public class SalesAgentLookUpServiceMapImpl implements SalesAgentLookUpService {
 		String tel1 = list.get(0);
 		String tel2 = list.get(1);
 		
-		CallDirection direction = CallDirection.INTERNAL; //default
+		CallDirection direction = CallDirection.NOTSET; //default
 		if(agentLookUpTable.containsKey(tel1) && !agentLookUpTable.containsKey(tel2)){
 		   //call out
 			direction = CallDirection.OUT;
