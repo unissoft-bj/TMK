@@ -177,8 +177,8 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	 */
 	private void normalFlow(OCLG oclg, CallDirection direction, List<String> list){
 		String tel = list.get(0);
-		if(direction == CallDirection.IN){
-			tel = list.get(0);
+		if(direction == CallDirection.OUT){
+			tel = list.get(1);
 		}
 		oclg.setTel(tel);
 		
