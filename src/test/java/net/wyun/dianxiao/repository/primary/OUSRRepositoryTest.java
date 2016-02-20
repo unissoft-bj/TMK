@@ -3,6 +3,8 @@ package net.wyun.dianxiao.repository.primary;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.StrictAssertions.assertThat;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,9 +34,10 @@ public class OUSRRepositoryTest extends BaseSpringTestRunner {
 	
 	@Test
 	public void getOUSRByFax(){
-		OUSR o = ousrRepository.findByFax("200");
-		assertThat(o).isNotNull();
-		System.out.println(o.toString());
+		List<OUSR> lo = ousrRepository.findByFax("200");
+		assertThat(lo).isNotNull();
+		for(OUSR o:lo)
+			System.out.println(o.toString());
 	}
 
 }
