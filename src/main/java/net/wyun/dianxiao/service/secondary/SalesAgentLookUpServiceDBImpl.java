@@ -3,10 +3,12 @@
  */
 package net.wyun.dianxiao.service.secondary;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -52,24 +54,48 @@ public class SalesAgentLookUpServiceDBImpl implements SalesAgentLookUpService {
 		String tel2 = list.get(1);
 		logger.info("tel1: " + tel1 + ", tel2: " + tel2);
 		CallDirection direction = CallDirection.NOTSET; //default
-		OUSR ousr = ousrRepo.findByFax(tel1);
+		List<OUSR> ousrList = ousrRepo.findByFax(tel1);
 		
-		if(null != ousr){
+		if(!ousrList.isEmpty()){
 			direction = CallDirection.OUT;
-			userLookupTable.put(tel1, ousr);
-			return direction;
+			OUSR ou = this.select(ousrList);
+			if(ou != null) {
+				userLookupTable.put(tel1, ou);
+				return direction;
+			}
+			
 		}
 		
-		ousr = ousrRepo.findByFax(tel2);
-		if(null != ousr){
+		ousrList = ousrRepo.findByFax(tel2);
+		if(!ousrList.isEmpty()){
 			direction = CallDirection.IN;
-			userLookupTable.put(tel1, ousr);
-			return direction;
+			OUSR ou = this.select(ousrList);
+			if(ou != null){
+				userLookupTable.put(tel2, ou);
+				return direction;
+			}
+			
 		}
 		
 		return direction;
 	}
 	
+	/**
+	 * precondition l is not empty
+	 * @param l
+	 * @return
+	 */
+	public OUSR select(List<OUSR> l){
+		List<OUSR> filtered = l.stream().filter(ousr -> ousr.getLocked().equals("N"))
+				              .sorted(Comparator.comparingInt(OUSR::getUSERID).reversed())
+				              .collect(Collectors.toList());
+		OUSR top = null;
+		if(!filtered.isEmpty()){
+			top = filtered.get(0);
+		}
+		return top;
+		
+	}
 	@PostConstruct
     public void init() {
 		
