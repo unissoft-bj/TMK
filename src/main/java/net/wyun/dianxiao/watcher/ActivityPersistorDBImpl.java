@@ -30,6 +30,7 @@ import net.wyun.dianxiao.repository.primary.OCLGRepository;
 import net.wyun.dianxiao.repository.primary.OSLPRepository;
 import net.wyun.dianxiao.repository.primary.OUSRRepository;
 import net.wyun.dianxiao.service.secondary.SalesAgentLookUpService;
+import net.wyun.dianxiao.service.secondary.SalesAgentLookUpServiceDBImpl;
 
 /**
  * @author michael
@@ -165,7 +166,10 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 	 */
 	private void handleNotSetPhoneExt(OCLG oclg, List<String> list){
 		//direction is NOTSET
-		oclg.setTel(list.get(0) + "," + list.get(1));
+		String tel1 = list.get(0);
+		String tel2 = list.get(1);
+		String tel = tel1.length() > tel2.length()?tel1:tel2;
+		oclg.setTel(tel);
 		oclg.setSlpCode((short) -1);
 	}
 	
@@ -189,9 +193,10 @@ public class ActivityPersistorDBImpl implements ActivityPersistor{
 		//the phoneExt has been checked before, so userName should be available
 		String userName = this.agentLookUpService.getUserNameByPhoneExt(phoneExt);
 		logger.debug("user name: " + userName);
-		OUSR ousr = ousrRepo.findByUName(userName); //TODO: it is a redundant call.
+		OUSR ousr = this.ousrRepo.findByUName(userName);
 		short userId = ousr.getUSERID();
 		oclg.setAttendUser(userId);
+		
 		
 		OSLP oslp = oslpRepo.findBySlpName(userName);
 		if(null == oslp){
