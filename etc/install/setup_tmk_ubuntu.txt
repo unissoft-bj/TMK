@@ -1,0 +1,13 @@
+1)  run 'adduser --system --no-create-home --disabled-password --disabled-login --group tmk' to add an user for tmk.  user tmk, and group tmk
+
+2)  run 'cd /opt'.
+
+3)  run 'chown -R sboot:sboot tmk/'.
+
+4)  run 'ln -sf dianxiao-0.0.9-SNAPSHOT.jar dianxiao.jar
+
+5)  run 'chmod +x /opt/tmk/wyun_svc.sh' to have it executable.
+
+6)  run 'sudo ln -sf /opt/tmk/wyun_svc.sh /etc/init.d/wyun_svc
+
+7)  run 'update-rc.d wyun_svc defaults' for wyun_svc run-level settings.
