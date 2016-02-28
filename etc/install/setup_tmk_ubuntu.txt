@@ -2,7 +2,7 @@
 
 2)  run 'cd /opt'.
 
-3)  run 'chown -R sboot:sboot tmk/'.
+3)  run 'chown -R tmk:tmk tmk/'.
 
 4)  run 'ln -sf dianxiao-0.0.9-SNAPSHOT.jar dianxiao.jar
 
