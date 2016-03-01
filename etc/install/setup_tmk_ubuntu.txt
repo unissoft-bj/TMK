@@ -4,10 +4,15 @@
 
 3)  run 'chown -R tmk:tmk tmk/'.
 
-4)  run 'ln -sf dianxiao-0.0.9-SNAPSHOT.jar dianxiao.jar
+4)  run 'cd tmk'
 
-5)  run 'chmod +x /opt/tmk/wyun_svc.sh' to have it executable.
+5)  run 'ln -sf dianxiao-0.0.9-SNAPSHOT.jar dianxiao.jar
 
-6)  run 'sudo ln -sf /opt/tmk/wyun_svc.sh /etc/init.d/wyun_svc
+6)  run 'chmod +x /opt/tmk/wyun_svc.sh' to have it executable.
 
-7)  run 'update-rc.d wyun_svc defaults' for wyun_svc run-level settings.
+7)  run 'sudo ln -sf /opt/tmk/wyun_svc.sh /etc/init.d/wyun_svc
+
+8)  run 'update-rc.d wyun_svc defaults' for wyun_svc run-level settings.
+
+
+
