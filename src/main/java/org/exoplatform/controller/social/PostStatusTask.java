@@ -32,6 +32,8 @@ import org.exoplatform.shareextension.service.UploadAction;
 import org.exoplatform.singleton.AccountSetting;
 import org.exoplatform.utils.ExoConstants;
 import org.exoplatform.utils.ExoDocumentUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -42,7 +44,9 @@ import org.exoplatform.utils.ExoDocumentUtils;
  * directly.
  */
 public class PostStatusTask{
-
+	
+	private static final Logger logger = LoggerFactory.getLogger(PostStatusTask.class);
+	
   private String                   sdcard_temp_dir;
 
   private String                   composeMessage;
@@ -113,6 +117,7 @@ public class PostStatusTask{
                     uploadInfo.fileToUpload.documentData.close();
                   } catch (IOException e) {
                   //  Log.d(getClass().getSimpleName(), Log.getStackTraceString(e));
+                	  logger.error("close file strea error", e);
                   }
                 }
                // tempFile.delete();
@@ -125,7 +130,7 @@ public class PostStatusTask{
             postInfo.buildTemplateParams(uploadInfo);
           }
         }
-      }
+      } //sending file to server
 
       final AtomicBoolean posted = new AtomicBoolean(false);
       if ((sdcard_temp_dir == null) || (sdcard_temp_dir != null && uploaded.get())) {
@@ -152,6 +157,7 @@ public class PostStatusTask{
     } catch (RuntimeException e) {
       // Cannot replace because SocialClientLib can throw exceptions like
       // ServerException, UnsupportMethod, etc
+    	logger.error("runtime execption catched: ", e);
       return -2;
     }
 

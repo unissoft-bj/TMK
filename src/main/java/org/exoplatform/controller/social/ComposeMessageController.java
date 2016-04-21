@@ -19,87 +19,87 @@
 package org.exoplatform.controller.social;
 
 import org.exoplatform.model.SocialSpaceInfo;
-import org.exoplatform.utils.ExoConnectionUtils;
 import org.exoplatform.utils.ExoConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ComposeMessageController {
 
+	private static final Logger logger = LoggerFactory.getLogger(ComposeMessageController.class);
+	private int composeType;
 
-  private int                    composeType;
+	private PostStatusTask mPostTask;
 
+	private String sdcard_temp_dir = null;
 
-  private PostStatusTask         mPostTask;
+	private String inputTextWarning;
 
-  private String                 sdcard_temp_dir = null;
+	private String okString;
 
-  private String                 inputTextWarning;
+	private String titleString;
 
-  private String                 okString;
+	private String contentString;
 
-  private String                 titleString;
+	private String sendingData;
 
-  private String                 contentString;
+	/**
+	 * Either null (public) or the space name
+	 */
+	private SocialSpaceInfo postDestination;
 
-  private String                 sendingData;
+	public ComposeMessageController(int type) {
+		composeType = type;
+		postDestination = null;
+	}
 
-  /**
-   * Either null (public) or the space name
-   */
-  private SocialSpaceInfo        postDestination;
+	/**
+	 * Set this post's destination.
+	 * 
+	 * @param destination
+	 *            null (public) or the SocialSpaceInfo object
+	 */
+	public void setPostDestination(SocialSpaceInfo destination) {
+		this.postDestination = destination;
+	}
 
-  public ComposeMessageController(int type) {
-    composeType = type;
-    postDestination = null;
-  }
+	/**
+	 * @return This post's destination:<br/>
+	 *         - null: public<br/>
+	 *         - SocialSpaceInfo: the destination space
+	 */
+	public SocialSpaceInfo getPostDestination() {
+		return this.postDestination;
+	}
 
-  /**
-   * Set this post's destination.
-   * 
-   * @param destination null (public) or the SocialSpaceInfo object
-   */
-  public void setPostDestination(SocialSpaceInfo destination) {
-    this.postDestination = destination;
-  }
+	/*
+	 * Take a photo and store it into /sdcard/eXo/DocumentCache
+	 */
+	public void initCamera() {
+		// sdcard_temp_dir = PhotoUtils.startImageCapture(mComposeActivity);
+	}
 
-  /**
-   * @return This post's destination:<br/>
-   *         - null: public<br/>
-   *         - SocialSpaceInfo: the destination space
-   */
-  public SocialSpaceInfo getPostDestination() {
-    return this.postDestination;
-  }
+	public void onSendMessage(String composeMessage, String sdcard, int position) {
+		if ((composeMessage != null) && (composeMessage.length() > 0)) {
 
-  /*
-   * Take a photo and store it into /sdcard/eXo/DocumentCache
-   */
-  public void initCamera() {
- //   sdcard_temp_dir = PhotoUtils.startImageCapture(mComposeActivity);
-  }
+			if (composeType == ExoConstants.COMPOSE_POST_TYPE) {
+				logger.info("post to activity stream.");
+				onPostTask(composeMessage, sdcard);
+			}else{
+				logger.error("Post comments is not supported for now.");
+			}
+		}
 
-  public void onSendMessage(String composeMessage, String sdcard, int position) {
-    if ((composeMessage != null) && (composeMessage.length() > 0)) {
-     
-        if (composeType == ExoConstants.COMPOSE_POST_TYPE) {
-          onPostTask(composeMessage, sdcard);
-     
-        }
-      } 
-    
-  }
+	}
 
-  private void onPostTask(String composeMessage, String sdcard) {
-    if (mPostTask == null) {
-      mPostTask = new PostStatusTask(sdcard, composeMessage, this);
-      mPostTask.execute();
-    }
-  }
+	private void onPostTask(String composeMessage, String sdcard) {
+		if (mPostTask == null) {
+			mPostTask = new PostStatusTask(sdcard, composeMessage, this);
+			mPostTask.execute();
+		}
+	}
 
-  
+	public String getSdCardTempDir() {
+		return sdcard_temp_dir;
+	}
 
-  public String getSdCardTempDir() {
-    return sdcard_temp_dir;
-  }
-
-  
 }
