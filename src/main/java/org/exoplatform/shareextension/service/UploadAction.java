@@ -34,11 +34,14 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.cookie.Cookie;
+import org.exoplatform.controller.social.ComposeMessageController;
 import org.exoplatform.model.SocialPostInfo;
 import org.exoplatform.shareextension.service.ShareService.UploadInfo;
 import org.exoplatform.singleton.DocumentHelper;
 import org.exoplatform.utils.ExoConnectionUtils;
 import org.exoplatform.utils.ExoConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by The eXo Platform SAS<br/>
@@ -48,7 +51,7 @@ import org.exoplatform.utils.ExoConstants;
  * @since Jun 17, 2015
  */
 public class UploadAction extends Action {
-
+  private static final Logger logger = LoggerFactory.getLogger(UploadAction.class);
   private UploadInfo uploadInfo;
 
   @Override
@@ -126,26 +129,31 @@ public class UploadAction extends Action {
       status = uploadReq.getResponseCode();
     } catch (UnsupportedEncodingException e) {
     //  Log.e(LOG_TAG, "Error while uploading ", uploadInfo.fileToUpload, Log.getStackTraceString(e));
+    	logger.error("", e);
     } catch (IOException e) {
    //   Log.e(LOG_TAG, "Error while uploading ", uploadInfo.fileToUpload, Log.getStackTraceString(e));
+    	logger.error("", e);
     } finally {
       if (uploadInfo != null && uploadInfo.fileToUpload != null && uploadInfo.fileToUpload.documentData != null)
         try {
           uploadInfo.fileToUpload.documentData.close();
         } catch (IOException e1) {
     //      Log.e(LOG_TAG, "Error while closing the upload stream", e1);
+        	logger.error("", e1);
         }
       if (output != null)
         try {
           output.close();
         } catch (IOException e) {
          // Log.e(LOG_TAG, "Error while closing the connection", e);
+        	logger.error("", e);
         }
       if (writer != null)
         writer.close();
     }
     if (status < HttpURLConnection.HTTP_OK || status >= HttpURLConnection.HTTP_MULT_CHOICE) {
       // Exit if the upload went wrong
+    	logger.error("upload file http status code {}", status);
       return listener.onError(String.format("Could not upload the file %s", uploadInfo.fileToUpload.documentName));
     }
     status = -1;
@@ -158,6 +166,7 @@ public class UploadAction extends Action {
       String stringUrl = new StringBuilder(postInfo.ownerAccount.serverUrl).append("/portal")
                                                                            .append(ExoConstants.DOCUMENT_CONTROL_PATH_REST)
                                                                            .toString();
+      logger.debug("upload url: {}", stringUrl);
       /*
       URI moveUri = new URI(stringUrl);
       moveUri = moveUri.buildUpon()
@@ -182,33 +191,22 @@ public class UploadAction extends Action {
       // Execute the request and retrieve the status code
       HttpResponse move = ExoConnectionUtils.httpClient.execute(moveReq);
       status = move.getStatusLine().getStatusCode();
-    } catch ( ClientProtocolException e)
-
-    {
+    } catch ( ClientProtocolException e) {
  //     Log.e(LOG_TAG, "Error while saving ", uploadInfo.fileToUpload, " in JCR", Log.getStackTraceString(e));
-    } catch (
-
-    IOException e)
-
-    {
+    	logger.error("", e);
+    } catch (IOException e) {
    //   Log.e(LOG_TAG, "Error while saving ", uploadInfo.fileToUpload, " in JCR", Log.getStackTraceString(e));
-    } catch (
-
-    Exception e)
-
-    {
+    	logger.error("", e);
+    } catch (Exception e) {
       // XXX can not remove because Uri.parse can throw runtime exception.
    //   Log.e(LOG_TAG, "Error while saving ", uploadInfo.fileToUpload, " in JCR", Log.getStackTraceString(e));
+    	logger.error("", e);
     }
 
     boolean ret = false;
-    if (status >= HttpStatus.SC_OK && status < HttpStatus.SC_MULTIPLE_CHOICES)
-
-    {
+    if (status >= HttpStatus.SC_OK && status < HttpStatus.SC_MULTIPLE_CHOICES) {
       ret = listener.onSuccess(String.format("File %s uploaded successfully", uploadInfo.fileToUpload.documentName));
-    } else
-
-    {
+    } else {
       ret = listener.onError(String.format("Could not save the file %s", uploadInfo.fileToUpload.documentName));
     }
     return ret;
