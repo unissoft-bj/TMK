@@ -19,8 +19,10 @@
 package org.exoplatform.singleton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.exoplatform.model.SocialActivityInfo;
+import org.exoplatform.model.SocialSpaceInfo;
 import org.exoplatform.social.client.api.model.RestActivity;
 import org.exoplatform.social.client.api.model.RestIdentity;
 import org.exoplatform.social.client.api.model.RestSpace;
@@ -86,6 +88,40 @@ public class SocialServiceHelper {
     mySpacesList = null;
     myStatusList = null;
     spaceService = null;
+  }
+  
+  public List<SocialSpaceInfo> getSpaces(){
+	  checkSpaceService();
+	  List<SocialSpaceInfo> spacesNames = new ArrayList<SocialSpaceInfo>();
+	  List<RestSpace> spaces = SocialServiceHelper.getInstance().spaceService.getMySocialSpaces();
+	        String currentServer = AccountSetting.getInstance().getDomainName();
+	        for (RestSpace space : spaces) {
+	          SocialSpaceInfo sp = new SocialSpaceInfo();
+	          sp.displayName = space.getDisplayName();
+	          sp.name = space.getName();
+	          sp.avatarUrl = currentServer + space.getAvatarUrl();
+	          sp.groupId = space.getGroupId();
+	          spacesNames.add(sp);
+	        }
+	        
+	 return spacesNames;
+  }
+  
+  public SocialSpaceInfo getSpaceByName(String name){
+	  checkSpaceService();
+	  SocialSpaceInfo ssi = null;
+	  List<SocialSpaceInfo> spacesNames = this.getSpaces();
+	        for (SocialSpaceInfo space : spacesNames) {
+	          if(space.displayName.equals(name)) return space;
+	        }
+	        
+	 return ssi;
+  }
+  
+  private void checkSpaceService(){
+	  if(null == spaceService){
+		  throw new RuntimeException("spaceService is not initialized!!!");
+	  }
   }
 
 }
