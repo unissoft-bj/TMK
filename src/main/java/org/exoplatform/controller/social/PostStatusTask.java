@@ -109,6 +109,7 @@ public class PostStatusTask{
                   @Override
                   public boolean onError(String error) {
                     uploaded.set(false);
+                    logger.error("upload error: {}", error);
                     return false;
                   }
                 });
@@ -117,7 +118,7 @@ public class PostStatusTask{
                     uploadInfo.fileToUpload.documentData.close();
                   } catch (IOException e) {
                   //  Log.d(getClass().getSimpleName(), Log.getStackTraceString(e));
-                	  logger.error("close file strea error", e);
+                	  logger.error("close file stream error", e);
                   }
                 }
                // tempFile.delete();
