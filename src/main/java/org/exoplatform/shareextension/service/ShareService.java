@@ -334,6 +334,8 @@ public class ShareService {
       this.folder = another.folder;
       this.jcrUrl = another.jcrUrl;
     }
+    
+    private final static String DIANXIAO_FOLDER = "calls"; 
 
     public void init(SocialPostInfo postInfo) {
 
@@ -345,13 +347,13 @@ public class ShareService {
         // File will be uploaded in the Public folder of the user's drive
         // e.g. /Users/u___/us___/use___/user/Public/Mobile
         drive = ExoConstants.DOCUMENT_PERSONAL_DRIVE_NAME;
-        folder = "Public/Mobile";
+        folder = "Public/" + DIANXIAO_FOLDER;
         jcrUrl = DocumentHelper.getInstance().getRepositoryHomeUrl();
       } else {
         // File will be uploaded in the Documents folder of the space's drive
         // e.g. /Groups/spaces/the_space/Documents/Mobile
         drive = ".spaces." + postInfo.destinationSpace.getOriginalName();
-        folder = "Mobile";
+        folder = DIANXIAO_FOLDER;
         StringBuffer url = new StringBuffer(postInfo.ownerAccount.serverUrl).append(ExoConstants.DOCUMENT_JCR_PATH)
                                                                             .append("/")
                                                                             .append(repository)
