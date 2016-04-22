@@ -18,6 +18,7 @@
  */
 package org.exoplatform.shareextension.service;
 
+
 import org.exoplatform.model.SocialPostInfo;
 import org.exoplatform.singleton.SocialServiceHelper;
 import org.exoplatform.social.client.api.SocialClientLibException;
@@ -26,6 +27,8 @@ import org.exoplatform.social.client.api.model.RestIdentity;
 import org.exoplatform.social.client.api.service.QueryParams;
 import org.exoplatform.social.client.api.service.QueryParams.QueryParamOption;
 import org.exoplatform.social.client.core.service.QueryParamsImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by The eXo Platform SAS<br/>
@@ -36,6 +39,7 @@ import org.exoplatform.social.client.core.service.QueryParamsImpl;
  * @since Jun 17, 2015
  */
 public class PostAction extends Action {
+	private static final Logger logger = LoggerFactory.getLogger(PostAction.class);
   /**
    * create and execute post action, wait for return result
    * 
@@ -140,12 +144,13 @@ public class PostAction extends Action {
           return (createdActivity != null);
         } else {
         //  Log.e(LOG_TAG, "Post message failed: could not get space ID for space " + postInfo.destinationSpace);
+        	logger.error("Post message failed: could not get space ID for space {}", postInfo.destinationSpace);
         }
       }
     } catch (Exception e) {
       // XXX cannot replace because SocialClientLib can throw exceptions like
       // ServerException, UnsupportMethod ,..
-     // Log.e(LOG_TAG, "Post message failed", e);
+    	logger.error(LOG_TAG, "Post message failed", e);
     }
     return false;
   }
@@ -157,6 +162,7 @@ public class PostAction extends Action {
       return spaceIdentity.getId();
     } catch (SocialClientLibException e) {
      // Log.e(LOG_TAG, "Could not retrieve the space ID of " + spaceName, e);
+    	logger.error("", e);
     }
     return null;
   }
