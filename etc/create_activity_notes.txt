@@ -1,0 +1,15 @@
+## This is a notes for understanding the flow of how a activity is posted to exo.
+the reference project is exo/mobile-android project.
+
+1. click send button in Android
+if (view.equals(sendButton)) {
+      String composeMessage = composeEditText.getText().toString();
+      messageController.onSendMessage(composeMessage, sdcard_temp_dir, currentPosition);
+}
+
+2. ComposeMessageController
+
+ mPostTask = new PostStatusTask(mComposeActivity, sdcard, composeMessage, this, mProgressDialog);
+ mPostTask.execute();
+ 
+ 3. 
