@@ -26,6 +26,8 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import org.exoplatform.utils.ExoWebAddress.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import android.util.Patterns;
 
@@ -34,6 +36,8 @@ import android.util.Patterns;
  * paristote@exoplatform.com Jun 24, 2014
  */
 public class ExoUtils {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ExoUtils.class);
 
   public static final String[] WRONG_CLOUD_URLS = new String[] { "http://exoplatform.net", "http://wks-acc.exoplatform.org",
       "http://netstg.exoplatform.org"          };
@@ -57,9 +61,11 @@ public class ExoUtils {
       return true;
     } catch (MalformedURLException e) {
    //   Log.d(ExoUtils.class.getSimpleName(), e.getMessage(), Log.getStackTraceString(e));
+    	logger.error("", e);
       return false;
     } catch (URISyntaxException e) {
      // Log.d(ExoUtils.class.getSimpleName(), e.getMessage(), Log.getStackTraceString(e));
+    	logger.error("", e);
       return false;
     }
   }
@@ -80,9 +86,11 @@ public class ExoUtils {
 
     } catch (MalformedURLException e) {
     //  Log.d(ExoUtils.class.getSimpleName(), e.getMessage(), Log.getStackTraceString(e));
+    	logger.error("", e);
       return null;
     } catch (URISyntaxException e) {
       //Log.d(ExoUtils.class.getSimpleName(), e.getMessage(), Log.getStackTraceString(e));
+    	logger.error("", e);
       return null;
     }
 
@@ -108,6 +116,7 @@ public class ExoUtils {
       }
       sUrl = scheme + "://" + host + port;
     } catch (ParseException pe) {
+    	logger.error("", pe);
       sUrl = null;
     }
     return sUrl;
@@ -198,9 +207,11 @@ public class ExoUtils {
         // else, URL is an IP address, return it as is
       } catch (URISyntaxException e) {
    //     Log.d(ExoUtils.class.getSimpleName(), e.getMessage(), Log.getStackTraceString(e));
+    	  logger.error("", e);
         finalName = defaultName;
       } catch (IndexOutOfBoundsException e) {
      //   Log.d(ExoUtils.class.getSimpleName(), e.getMessage(), Log.getStackTraceString(e));
+    	  logger.error("", e);
         finalName = defaultName;
       }
     }
