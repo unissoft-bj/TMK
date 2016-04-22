@@ -30,8 +30,8 @@ public class ComposeMessageControllerTest {
 		System.out.println("set up test.");
 		String user = "michaelyin";
 		String pw = "andy0127";
-		String tenant = "http://121.22.36.226:5015";
-		
+		//String tenant = "http://121.22.36.226:5015";
+		String tenant = "http://localhost:8080";
 		ExoAccount newAccountObj = new ExoAccount();
 		String name = ExoUtils.getAccountNameFromURL(tenant, "My Intranet");
 		System.out.println("name: " + name);
@@ -89,10 +89,14 @@ public class ComposeMessageControllerTest {
 	@Test
 	public void testGetSpace(){
 		 SocialSpaceInfo ssi = SocialServiceHelper.getInstance().getSpaceByName("电话销售");
-	        
-	    	 System.out.println(ssi.displayName);
-	    	 System.out.println(ssi.groupId);
-	    	 System.out.println(ssi.id);
+	        if(ssi != null){
+	        	System.out.println(ssi.displayName);
+		    	 System.out.println(ssi.groupId);
+		    	 System.out.println(ssi.id);
+	        }else{
+	        	System.out.println("no space found!");
+	        }
+	    	 
 	    	 
 	     
 	}
