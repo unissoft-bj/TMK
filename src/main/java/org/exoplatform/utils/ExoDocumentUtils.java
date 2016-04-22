@@ -42,13 +42,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.FileEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import org.exoplatform.model.ExoFile;
 import org.exoplatform.singleton.AccountSetting;
 import org.exoplatform.singleton.DocumentHelper;
@@ -57,6 +57,7 @@ import android.webkit.MimeTypeMap;
 
 public class ExoDocumentUtils {
 
+	private static final Logger logger = LoggerFactory.getLogger(ExoDocumentUtils.class);
   private static final String  LOG_TAG              = ExoDocumentUtils.class.getName();
 
   public static final String   ALL_VIDEO_TYPE       = "video/*";
@@ -117,6 +118,7 @@ public class ExoDocumentUtils {
 	      // XXX cannot replace because WebdavMethod, httpclient.execute can throw
 	      // exception
 	  //    Log.e(LOG_TAG, e.getMessage(), Log.getStackTraceString(e));
+	      logger.error("error setting repo home url: ", e);
 	      DocumentHelper.getInstance().setRepositoryHomeUrl(null);
 	    }
 	  }
@@ -319,12 +321,15 @@ public class ExoDocumentUtils {
       }
     } catch (ParserConfigurationException e) {
     //  Log.e(" ParserConfigurationException ", e.getMessage());
+    	logger.error("parser configuration error", e);
       folderArray = null;
     } catch (SAXException e) {
       //Log.e(" SAXException ", e.getMessage());
+    	logger.error("", e);
       folderArray = null;
     } catch (IOException e) {
       //Log.e(" IOException ", e.getMessage());
+    	logger.error("", e);
       folderArray = null;
     }
 
@@ -476,6 +481,7 @@ public class ExoDocumentUtils {
 	      // XXX catch null of destination, WebdavMethod initial, httpclient
 	      // exception
 	//      Log.e(LOG_TAG, e.getMessage(), e);
+	    	logger.error("", e);
 	      return false;
 	    }
 	  }
@@ -554,15 +560,19 @@ public class ExoDocumentUtils {
         document.documentMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
       }
       // Get the orientation angle from the EXIF properties
-      if ("image/jpeg".equals(document.documentMimeType))
-        //document.orientationAngle = getExifOrientationAngleFromFile(file.getAbsolutePath());
+      if ("image/jpeg".equals(document.documentMimeType)){
+    	//document.orientationAngle = getExifOrientationAngleFromFile(file.getAbsolutePath());
+      }
+        
       return document;
     } catch (URISyntaxException e) {
       //Log.e(LOG_TAG, "Cannot retrieve the file at " + fileUri);
       //Log.d(LOG_TAG, e.getMessage() + "\n" + Log.getStackTraceString(e));
+    	logger.error("", e);
     } catch (FileNotFoundException e) {
       //Log.e(LOG_TAG, "Cannot retrieve the file at " + fileUri);
       //Log.d(LOG_TAG, e.getMessage() + "\n" + Log.getStackTraceString(e));
+    	logger.error("", e);
     }
     return null;
   }
