@@ -60,6 +60,7 @@ public class PostStatusTask{
   private String                   warningTitle;
 
   private ComposeMessageController messageController;
+  private String destinationFolder; //could be null
 
   public PostStatusTask(String dir, String content, ComposeMessageController controller) {
     messageController = controller;
@@ -69,13 +70,23 @@ public class PostStatusTask{
 
  
 
-  public Integer execute() {
+  public PostStatusTask(String sdcard, String composeMessage,
+		String destinationFolder,
+		ComposeMessageController composeMessageController) {
+	  this(sdcard, composeMessage, composeMessageController);
+	  this.destinationFolder = destinationFolder;
+}
+
+
+
+public Integer execute() {
 
     try {
       SocialPostInfo postInfo = new SocialPostInfo();
       postInfo.destinationSpace = messageController.getPostDestination();
       postInfo.postMessage = composeMessage;
       postInfo.ownerAccount = AccountSetting.getInstance().getCurrentAccount();
+      postInfo.setDestinationFolderName(destinationFolder);
 
       final AtomicBoolean uploaded = new AtomicBoolean(false);
       // If the post contains an attached image
@@ -146,6 +157,7 @@ public class PostStatusTask{
 
           @Override
           public boolean onError(String error) {
+        	logger.error("Post Action error: {}", error);
             posted.set(false);
             return false;
           }

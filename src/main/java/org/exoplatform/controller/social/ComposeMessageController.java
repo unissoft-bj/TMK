@@ -78,12 +78,20 @@ public class ComposeMessageController {
 		// sdcard_temp_dir = PhotoUtils.startImageCapture(mComposeActivity);
 	}
 
-	public void onSendMessage(String composeMessage, String sdcard, int position) {
+	/**
+	 * 
+	 * @param composeMessage
+	 * @param sdcard
+	 * @param position
+	 * @param destinationFolder, for example, the test folder at 
+	 *        http://localhost:8080/rest/private/jcr/repository/collaboration/Groups/spaces/dian_hua_xiao_shou/Documents/test
+	 */
+	public void onSendMessage(String composeMessage, String sdcard, int position, String destinationFolder) {
 		if ((composeMessage != null) && (composeMessage.length() > 0)) {
 
 			if (composeType == ExoConstants.COMPOSE_POST_TYPE) {
 				logger.info("post to activity stream.");
-				onPostTask(composeMessage, sdcard);
+				onPostTask(composeMessage, sdcard, destinationFolder);
 			}else{
 				logger.error("Post comments is not supported for now.");
 			}
@@ -91,15 +99,19 @@ public class ComposeMessageController {
 
 	}
 
-	private void onPostTask(String composeMessage, String sdcard) {
+	private void onPostTask(String composeMessage, String sdcard, String destinationFolder) {
 		if (mPostTask == null) {
-			mPostTask = new PostStatusTask(sdcard, composeMessage, this);
+			mPostTask = new PostStatusTask(sdcard, composeMessage, destinationFolder, this);
 			mPostTask.execute();
 		}
 	}
 
 	public String getSdCardTempDir() {
 		return sdcard_temp_dir;
+	}
+
+	public void onSendMessage(String composeMessage, String sdcard, int position) {
+		onSendMessage(composeMessage, sdcard, position, null);
 	}
 
 }
