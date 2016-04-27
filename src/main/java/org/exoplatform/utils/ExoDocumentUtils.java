@@ -460,6 +460,7 @@ public class ExoDocumentUtils {
 
   
   public static boolean createFolder(String destination) {
+	    logger.info("create folder: {}", destination);
 	    HttpResponse response;
 	    try {
 
@@ -467,6 +468,7 @@ public class ExoDocumentUtils {
 	      WebdavMethod create = new WebdavMethod("HEAD", destination);
 	      response = ExoConnectionUtils.httpClient.execute(create);
 	      int status = response.getStatusLine().getStatusCode();
+	      logger.debug("http response status: {}", status);
 	      if (status >= HttpStatus.SC_OK && status < HttpStatus.SC_MULTIPLE_CHOICES) {
 	        return true;
 	      } else {
