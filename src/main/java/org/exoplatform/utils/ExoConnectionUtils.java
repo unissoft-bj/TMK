@@ -38,6 +38,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
@@ -227,8 +229,15 @@ public class ExoConnectionUtils {
     HttpConnectionParams.setSoTimeout(httpParameters, SOCKET_OPERATION_TIMEOUT);
     HttpConnectionParams.setTcpNoDelay(httpParameters, true);
     HttpProtocolParams.setUserAgent(httpParameters, getUserAgent());
+    
+    PoolingClientConnectionManager cxMgr = new PoolingClientConnectionManager( SchemeRegistryFactory.createDefault());
+    cxMgr.setMaxTotal(2);
+    cxMgr.setDefaultMaxPerRoute(2);
+    DefaultHttpClient dhc = new DefaultHttpClient(cxMgr, httpParameters);
+    
+    
 
-    return new DefaultHttpClient(httpParameters);
+    return dhc;
   }
 
   public static HttpResponse getRequestResponse(String strUrlRequest) throws IOException {
