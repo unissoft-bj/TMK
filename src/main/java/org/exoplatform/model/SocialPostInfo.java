@@ -47,11 +47,13 @@ public class SocialPostInfo {
 
   public List<String>        postAttachedFiles;
 
-  public SocialSpaceInfo     destinationSpace;
+  public SocialSpaceInfo     destinationSpace;   // for example, dianxiao space
 
   public Map<String, String> templateParams;
 
   public String              activityType = TYPE_DEFAULT;
+  
+  private String destinationFolderName;        //for example, mobile for android/iphone client.
 
   public SocialPostInfo() {
   }
@@ -125,5 +127,13 @@ public class SocialPostInfo {
       templateParams.put("mimeType", uploadInfo.fileToUpload.documentMimeType);
     }
   }
+
+	public String getDestinationFolderName() {
+		return destinationFolderName;
+	}
+
+	public void setDestinationFolderName(String destinationFolderName) {
+		this.destinationFolderName = destinationFolderName;
+	}
 
 }
