@@ -76,13 +76,26 @@ public class ComposeMessageControllerTest {
 		//fail("Not yet implemented");
 	}
 	
+	//send file to default folder
 	@Test
 	public void testOnSendMessageWithFile() {
 		SocialSpaceInfo ssi = SocialServiceHelper.getInstance().getSpaceByName("电话销售");
 		
 		ComposeMessageController controller = new ComposeMessageController(0);  //0 -- post
 		controller.setPostDestination(ssi);
-		controller.onSendMessage("new post from android", "/home/michael/Downloads/Frozen-5098.mp3", -1);
+		//controller.onSendMessage("new post from android", "/home/michael/Downloads/Frozen-5098.mp3", -1);
+		controller.onSendMessage("new post from android", "/home/michael/Downloads/goodbye.mp3", -1);
+		//fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testOnSendMessageWithFileAndFolder() {
+		SocialSpaceInfo ssi = SocialServiceHelper.getInstance().getSpaceByName("电话销售");
+		
+		ComposeMessageController controller = new ComposeMessageController(0);  //0 -- post
+		controller.setPostDestination(ssi);
+		//controller.onSendMessage("new post from android", "/home/michael/Downloads/Frozen-5098.mp3", -1);
+		controller.onSendMessage("new post from android", "/home/michael/Downloads/goodbye.mp3", -1, "2016-04-27");
 		//fail("Not yet implemented");
 	}
 	
