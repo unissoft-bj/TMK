@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 import net.wyun.dianxiao.config.TMKProperties;
 import net.wyun.dianxiao.model.CallDirection;
 import net.wyun.dianxiao.watcher.ActivityPersistor;
+import net.wyun.dianxiao.watcher.ActivityPersistorDBImpl;
+import net.wyun.dianxiao.watcher.ActivityPersistorExoImpl;
 import net.wyun.dianxiao.watcher.FileProcessUtil;
 
 @Component
@@ -24,7 +26,10 @@ public class MP3FileHandlerImpl implements MP3FileHandler {
 	TMKProperties tmkProperties;
 	
 	@Autowired
-	ActivityPersistor activityPersistor;
+	ActivityPersistor activityPersistorDBImpl;
+	
+	@Autowired
+	ActivityPersistorExoImpl activityPersistorExoImpl;
 
 	private static final Logger logger = LoggerFactory.getLogger(MP3FileHandlerImpl.class);
 
@@ -38,7 +43,7 @@ public class MP3FileHandlerImpl implements MP3FileHandler {
 		// 1. remove those internal calls
 		String fileName = FileProcessUtil.extractFileName(path.toString());
 		List<String> list = FileProcessUtil.process(fileName);
-		CallDirection direction = activityPersistor.getCallDirection(list);
+		CallDirection direction = activityPersistorDBImpl.getCallDirection(list);
 		
 		if (direction == CallDirection.NOTSET) {
 			logger.info("internal call");
@@ -62,15 +67,19 @@ public class MP3FileHandlerImpl implements MP3FileHandler {
 			logger.info("moving file done. file now at: " + target);
 			
             //persist data to database
-			logger.info("persist activity now ...");
-			activityPersistor.persist(direction, list);
-			logger.info("persist activity done.");
+			logger.info("persist activity to DB now ...");
+			activityPersistorDBImpl.persist(direction, list);
+			logger.info("persist activity to DB done.");
+			
+			//persist data to eXo
+			logger.info("persist activity to eXo now ...");
+			activityPersistorExoImpl.persist(direction, list);
+			logger.info("persist activity to eXo done.");
 		} catch (IOException e) {
-			logger.error(e.getLocalizedMessage());
-			e.printStackTrace();
+			logger.error("", e);
 		} catch (InterruptedException e) {
-			logger.error(e.getLocalizedMessage());
-			e.printStackTrace();
+			logger.error("", e);
+			
 		}
 
 	}
