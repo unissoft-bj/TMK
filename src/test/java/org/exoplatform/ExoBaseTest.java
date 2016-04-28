@@ -25,8 +25,8 @@ public class ExoBaseTest {
 	@Before
 	public void setUp() throws Exception {
 		System.out.println("set up test.");
-		String user = "michaelyin";
-		String pw = "andy0127";
+		String user = "tmk";
+		String pw = "tmk_qhd!";
 		//String tenant = "http://121.22.36.226:5015";
 		String tenant = "http://localhost:8080";
 		ExoAccount newAccountObj = new ExoAccount();

@@ -42,7 +42,7 @@ public class ComposeMessageControllerTest extends ExoBaseTest {
 		ComposeMessageController controller = new ComposeMessageController(0);  //0 -- post
 		controller.setPostDestination(ssi);
 		//controller.onSendMessage("new post from android", "/home/michael/Downloads/Frozen-5098.mp3", -1);
-		controller.onSendMessage("new post from android", "/home/michael/Downloads/goodbye.mp3", -1, "dysoft/2016-04-28");
+		controller.onSendMessage("new post from android", "/home/michael/Downloads/goodbye.mp3", -1, "dysoft/2016-04-25");
 		//fail("Not yet implemented");
 	}
 	
