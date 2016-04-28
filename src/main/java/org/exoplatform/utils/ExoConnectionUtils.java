@@ -231,8 +231,8 @@ public class ExoConnectionUtils {
     HttpProtocolParams.setUserAgent(httpParameters, getUserAgent());
     
     PoolingClientConnectionManager cxMgr = new PoolingClientConnectionManager( SchemeRegistryFactory.createDefault());
-    cxMgr.setMaxTotal(2);
-    cxMgr.setDefaultMaxPerRoute(2);
+    cxMgr.setMaxTotal(10);
+    cxMgr.setDefaultMaxPerRoute(5);
     DefaultHttpClient dhc = new DefaultHttpClient(cxMgr, httpParameters);
     
     
