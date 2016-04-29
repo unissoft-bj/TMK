@@ -14,5 +14,9 @@
 
 8)  run 'update-rc.d wyun_svc defaults' for wyun_svc run-level settings.
 
+9)  If it is deployed working with eXo server. You also need to make sure eXo related properties are correctly set up.
+    In the eXo server, a.) create 电话销售 space.
+                       b.) create an account tmk in 电话销售 space.
+
 
 
