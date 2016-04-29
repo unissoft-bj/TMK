@@ -78,12 +78,23 @@ public class ActivityPersistorExoImpl {
 	 *      duration for sweeper
 	 */
 	public void persist(CallDirection direction, List<String> list) {
+		try {
+			init();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			logger.error("", e);
+		}
+		
         SocialSpaceInfo ssi = SocialServiceHelper.getInstance().getSpaceByName("电话销售");
 		
 		ComposeMessageController controller = new ComposeMessageController(0);  //0 -- post
 		controller.setPostDestination(ssi);
 		logger.info("file path: {}", list.get(6));
 		controller.onSendMessage("new call record", list.get(6), -1, this.exoTmkFolder+ "/" + list.get(2));
+		
+		//release resources
+		logger.info("log out, release resources.");
+		ExoConnectionUtils.loggingOut();
 
 	}
 
@@ -94,7 +105,7 @@ public class ActivityPersistorExoImpl {
 		// String tenant = "http://121.22.36.226:5015";
 		//String tenant = "http://localhost:8080";
 		ExoAccount newAccountObj = new ExoAccount();
-		String name = ExoUtils.getAccountNameFromURL(this.exoServerUrl, "My Intranet");
+		String name = ExoUtils.getAccountNameFromURL(this.exoServerUrl, "My Intranet"); //here account name is the server name
 		logger.info("account name from URL: " + name);
 		// newAccountObj.accountName = ExoUtils.capitalize(name);
 		newAccountObj.serverUrl = this.exoServerUrl;
